@@ -101,6 +101,12 @@ export const INTERVIEW_SITES: ResourceItem[] = [
     category: "Interview",
   },
   {
+    name: "JobTraining (כלי להדמיה)",
+    description: "כלי להדמיה של ראיונות עבודה בעברית ובשפות נוספות, המאפשר תרגול אינטראקטיבי.",
+    url: "https://jobtraining.me/he",
+    category: "Interview",
+  },
+  {
     name: "Webcand",
     description: "פלטפורמה מובילה לראיונות וידאו דיגיטליים. מומלץ להכיר את המערכת והפורמט המוקלט.",
     url: "https://www.webcand.com/",

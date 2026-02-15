@@ -38,23 +38,21 @@ const App: React.FC = () => {
       return;
     }
     
-    // Start transition: fade out
+    // Start transition: fade out (300ms duration matching global animation)
     setIsContentVisible(false);
     if (isMobileMenuOpen) setIsMobileMenuOpen(false);
 
     setTimeout(() => {
-      // Show loader and switch tab logic
-      setIsLoading(true);
       setActiveTab(tab);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsLoading(true);
 
-      // Simulate fetch delay
+      // Transition to showing content
       setTimeout(() => {
         setIsLoading(false);
-        // Allow DOM update then fade in
         setTimeout(() => setIsContentVisible(true), 50);
-      }, 500);
-    }, 300);
+      }, 400); // Small pause for UX
+    }, 300); // 300ms delay for fade-out animation
   };
 
   const renderContent = () => {
@@ -66,7 +64,7 @@ const App: React.FC = () => {
         );
 
         return (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-fadeIn">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">לוחות דרושים מומלצים</h2>
               <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8">
@@ -103,7 +101,7 @@ const App: React.FC = () => {
         );
       case Tab.LEARNING:
         return (
-          <div className="space-y-12">
+          <div className="space-y-12 animate-fadeIn">
             <div>
               <div className="text-center mb-10">
                 <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">פיתוח מיומנויות ולמידה</h2>
@@ -122,7 +120,7 @@ const App: React.FC = () => {
         );
       case Tab.INTERVIEW:
         return (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-fadeIn">
              <div className="text-center mb-10">
                 <div className="inline-flex p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 mb-4">
                   <Mic className="w-8 h-8" />
@@ -143,7 +141,7 @@ const App: React.FC = () => {
         );
       case Tab.CONSULTANT:
         return (
-          <div className="max-w-4xl mx-auto h-[calc(100vh-140px)]">
+          <div className="max-w-4xl mx-auto h-[calc(100vh-140px)] animate-fadeIn">
              <ChatConsultant />
           </div>
         );
@@ -278,7 +276,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-8 relative min-h-[50vh]">
+      <main className="flex-1 container mx-auto px-4 py-8 relative min-h-[60vh]">
         {isLoading ? (
           <div className="absolute inset-0 flex items-center justify-center animate-fadeIn">
             <div className="flex flex-col items-center gap-3 text-medical-600 dark:text-medical-400">
@@ -287,7 +285,7 @@ const App: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className={`transition-opacity duration-300 ease-in-out ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`transition-all duration-300 ease-in-out ${isContentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
             {renderContent()}
           </div>
         )}
@@ -295,16 +293,19 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-auto transition-colors duration-300">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-slate-500 dark:text-slate-400 text-sm">
-          <p className="font-medium">© Noam Gold AI 2025</p>
-          <span className="hidden md:inline text-slate-300 dark:text-slate-600">|</span>
-          <a 
-            href="mailto:gold.noam@gmail.com" 
-            className="flex items-center gap-2 hover:text-medical-600 dark:hover:text-medical-400 transition-colors px-4 py-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700/50"
-          >
-            <Mail className="w-4 h-4" />
-            Send Feedback
-          </a>
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 text-slate-500 dark:text-slate-400 text-sm">
+          <p className="font-medium">© Noam Gold AI 2026</p>
+          <div className="flex items-center gap-4">
+            <a 
+              href="mailto:goldnoamai@gmail.com" 
+              className="flex items-center gap-2 hover:text-medical-600 dark:hover:text-medical-400 transition-colors px-4 py-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700/50"
+            >
+              <Mail className="w-4 h-4" />
+              Send Feedback
+            </a>
+            <span className="hidden md:inline text-slate-300 dark:text-slate-600">|</span>
+            <span className="text-xs">goldnoamai@gmail.com</span>
+          </div>
         </div>
       </footer>
     </div>
