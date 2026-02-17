@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, Bot, HelpCircle, Heart } from 'lucide-react';
+import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart } from 'lucide-react';
 import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, INTERVIEW_QUESTIONS } from './constants';
 import { ResourceCard } from './components/ResourceCard';
-import { ChatConsultant } from './components/ChatConsultant';
 
 const Tab = {
   JOBS: 'JOBS',
   LEARNING: 'LEARNING',
   INTERVIEW: 'INTERVIEW',
-  ADVICE: 'ADVICE',
-  CONSULTANT: 'CONSULTANT'
+  ADVICE: 'ADVICE'
 } as const;
 
 type TabType = typeof Tab[keyof typeof Tab];
@@ -305,25 +303,19 @@ const App: React.FC = () => {
              </div>
           </div>
         );
-      case Tab.CONSULTANT:
-        return (
-          <div className="max-w-4xl mx-auto h-[calc(100vh-140px)] animate-fadeIn">
-             <ChatConsultant />
-          </div>
-        );
       default:
         return null;
     }
   };
 
-  const NavButton = ({ tab, icon: Icon, label, colorClass = "" }: { tab: TabType, icon: any, label: string, colorClass?: string }) => {
+  const NavButton = ({ tab, icon: Icon, label }: { tab: TabType, icon: any, label: string }) => {
     const isActive = activeTab === tab;
     return (
       <button
         onClick={() => handleTabChange(tab)}
         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
           isActive
-            ? colorClass || 'bg-white dark:bg-slate-600 text-medical-700 dark:text-white shadow-sm'
+            ? 'bg-white dark:bg-slate-600 text-medical-700 dark:text-white shadow-sm'
             : 'text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700'
         }`}
       >
@@ -352,7 +344,6 @@ const App: React.FC = () => {
               <NavButton tab={Tab.LEARNING} icon={GraduationCap} label="למידה וקורסים" />
               <NavButton tab={Tab.INTERVIEW} icon={Mic} label="הכנה לראיונות" />
               <NavButton tab={Tab.ADVICE} icon={Lightbulb} label="טיפים מקצועיים" />
-              <NavButton tab={Tab.CONSULTANT} icon={Bot} label={'ד"ר ג\'וב AI'} colorClass="bg-gradient-to-r from-medical-500 to-indigo-500 text-white shadow-md" />
             </nav>
 
             <button 
@@ -377,7 +368,7 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Nav Dropdown with Subtle Animation */}
+        {/* Mobile Nav Dropdown */}
         <div 
           id="mobile-menu"
           className={`lg:hidden bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 absolute w-full left-0 shadow-lg z-40 transition-all duration-300 ease-in-out origin-top ${
@@ -386,62 +377,58 @@ const App: React.FC = () => {
               : 'opacity-0 -translate-y-4 invisible scale-y-95 pointer-events-none'
           }`}
           role="navigation"
-          aria-label="תפריט ניווט נייד"
         >
-          <div className="flex flex-col p-4 gap-2">
+          <div className="flex flex-col p-4 gap-2 text-right">
             <button 
               onClick={() => handleTabChange(Tab.JOBS)} 
-              className={`p-3 rounded-xl text-right font-medium flex items-center gap-3 transition-colors ${
+              className={`p-3 rounded-xl font-medium flex items-center justify-end gap-3 transition-colors ${
                 activeTab === Tab.JOBS 
                   ? 'bg-medical-50 dark:bg-medical-900/30 text-medical-700 dark:text-medical-300' 
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  : 'text-slate-600 dark:text-slate-300'
               }`}
             >
-              <Briefcase className="w-5 h-5" /> חיפוש עבודה
+              חיפוש עבודה <Briefcase className="w-5 h-5" /> 
             </button>
             <button 
               onClick={() => handleTabChange(Tab.LEARNING)} 
-              className={`p-3 rounded-xl text-right font-medium flex items-center gap-3 transition-colors ${
+              className={`p-3 rounded-xl font-medium flex items-center justify-end gap-3 transition-colors ${
                 activeTab === Tab.LEARNING 
                   ? 'bg-medical-50 dark:bg-medical-900/30 text-medical-700 dark:text-medical-300' 
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  : 'text-slate-600 dark:text-slate-300'
               }`}
             >
-              <GraduationCap className="w-5 h-5" /> למידה וקורסים
+              למידה וקורסים <GraduationCap className="w-5 h-5" /> 
             </button>
             <button 
               onClick={() => handleTabChange(Tab.INTERVIEW)} 
-              className={`p-3 rounded-xl text-right font-medium flex items-center gap-3 transition-colors ${
+              className={`p-3 rounded-xl font-medium flex items-center justify-end gap-3 transition-colors ${
                 activeTab === Tab.INTERVIEW 
                   ? 'bg-medical-50 dark:bg-medical-900/30 text-medical-700 dark:text-medical-300' 
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  : 'text-slate-600 dark:text-slate-300'
               }`}
             >
-              <Mic className="w-5 h-5" /> הכנה לראיונות
+              הכנה לראיונות <Mic className="w-5 h-5" /> 
             </button>
             <button 
               onClick={() => handleTabChange(Tab.ADVICE)} 
-              className={`p-3 rounded-xl text-right font-medium flex items-center gap-3 transition-colors ${
+              className={`p-3 rounded-xl font-medium flex items-center justify-end gap-3 transition-colors ${
                 activeTab === Tab.ADVICE 
                   ? 'bg-medical-50 dark:bg-medical-900/30 text-medical-700 dark:text-medical-300' 
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  : 'text-slate-600 dark:text-slate-300'
               }`}
             >
-              <Lightbulb className="w-5 h-5" /> טיפים מקצועיים
-            </button>
-            <button 
-              onClick={() => handleTabChange(Tab.CONSULTANT)} 
-              className={`p-3 rounded-xl text-right font-medium flex items-center gap-3 transition-all ${
-                activeTab === Tab.CONSULTANT 
-                  ? 'bg-gradient-to-r from-medical-500 to-indigo-500 text-white shadow-md scale-[1.02]' 
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
-              }`}
-            >
-              <Stethoscope className="w-5 h-5" /> התייעץ עם ד"ר ג'וב
+              טיפים מקצועיים <Lightbulb className="w-5 h-5" /> 
             </button>
           </div>
         </div>
       </header>
+
+      {/* AdSense Top Slot */}
+      <div className="container mx-auto px-4 mt-4">
+        <div className="w-full h-24 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
+          מקום לפרסומת (AdSense Ready)
+        </div>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8 relative min-h-[60vh]">
@@ -458,6 +445,13 @@ const App: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* AdSense Bottom Slot */}
+      <div className="container mx-auto px-4 mb-8">
+        <div className="w-full h-32 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-slate-400 text-xs italic">
+          מקום לפרסומת מרובעת (AdSense Ready)
+        </div>
+      </div>
 
       {/* Footer */}
       <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-auto transition-colors duration-300">
