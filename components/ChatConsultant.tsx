@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import { Send, Bot, User, Loader2, Stethoscope, AlertCircle } from 'lucide-react';
@@ -61,8 +62,9 @@ export const ChatConsultant: React.FC = () => {
         parts: [{ text: m.content }]
       }));
 
+      // Updated model to gemini-3-flash-preview as per guidelines for general Q&A
       const chat = ai.chats.create({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-flash-preview',
         config: {
           systemInstruction: `You are "Dr. Job" (ד"ר ג'וב), a helpful, empathetic, and professional career consultant speaking Hebrew. 
           Your goal is to help users find jobs and improve their skills.

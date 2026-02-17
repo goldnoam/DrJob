@@ -13,3 +13,11 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
 }
+
+export interface AdviceItem {
+  id: string;
+  title: string;
+  icon: string;
+  content: string[];
+  color: string;
+}
