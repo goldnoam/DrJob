@@ -24,6 +24,7 @@ export interface AdviceItem {
 
 export interface TechnicalQuestion {
   question: string;
+  answer: string;
   topic?: string;
 }
 
