@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart } from 'lucide-react';
-import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, INTERVIEW_QUESTIONS } from './constants';
+import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart, PenTool } from 'lucide-react';
+import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, INTERVIEW_QUESTIONS, TECHNICAL_ROLES } from './constants';
 import { ResourceCard } from './components/ResourceCard';
 
 const Tab = {
@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [savedJobUrls, setSavedJobUrls] = useState<string[]>([]);
   const [isContentVisible, setIsContentVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTechRoleId, setSelectedTechRoleId] = useState<string>(TECHNICAL_ROLES[0].id);
 
   useEffect(() => {
     if (darkMode) {
@@ -109,6 +110,8 @@ const App: React.FC = () => {
       }, 400);
     }, 300);
   };
+
+  const currentTechRole = TECHNICAL_ROLES.find(r => r.id === selectedTechRoleId) || TECHNICAL_ROLES[0];
 
   const renderContent = () => {
     switch (activeTab) {
@@ -240,10 +243,59 @@ const App: React.FC = () => {
               ))}
             </div>
 
+            {/* Technical Questions Section */}
+            <div className="mt-16 bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-100 dark:border-slate-700 shadow-sm">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                    <PenTool className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white">שאלות מקצועיות לפי תפקיד</h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">התכונן לשלב הטכני בראיון</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {TECHNICAL_ROLES.map(role => (
+                    <button
+                      key={role.id}
+                      onClick={() => setSelectedTechRoleId(role.id)}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                        selectedTechRoleId === role.id 
+                          ? 'bg-medical-500 text-white shadow-md shadow-medical-500/20' 
+                          : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                      }`}
+                    >
+                      {role.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                {currentTechRole.categories.map((cat, idx) => (
+                  <div key={idx} className="space-y-4">
+                    <h4 className="text-lg font-bold text-medical-600 dark:text-medical-400 border-r-4 border-medical-500 pr-3">
+                      {cat.title}
+                    </h4>
+                    <div className="space-y-3">
+                      {cat.questions.map((q, qIdx) => (
+                        <div key={qIdx} className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl text-slate-700 dark:text-slate-300 text-sm border border-slate-100 dark:border-slate-800 hover:border-medical-200 dark:hover:border-medical-800/50 transition-colors">
+                          <span className="font-bold text-medical-500 ml-2">•</span>
+                          {q.question}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="mt-16">
               <div className="flex items-center gap-3 mb-8 border-b border-slate-200 dark:border-slate-700 pb-4">
                 <HelpCircle className="w-6 h-6 text-medical-500" />
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">שאלות נפוצות בראיונות ואיך לענות</h3>
+                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">שאלות כלליות נפוצות בראיונות ואיך לענות</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

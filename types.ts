@@ -21,3 +21,17 @@ export interface AdviceItem {
   content: string[];
   color: string;
 }
+
+export interface TechnicalQuestion {
+  question: string;
+  topic?: string;
+}
+
+export interface TechnicalRole {
+  id: string;
+  name: string;
+  categories: {
+    title: string;
+    questions: TechnicalQuestion[];
+  }[];
+}

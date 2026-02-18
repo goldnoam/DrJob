@@ -1,4 +1,4 @@
-import { ResourceItem, AdviceItem } from './types';
+import { ResourceItem, AdviceItem, TechnicalRole } from './types';
 
 export const JOB_SITES: ResourceItem[] = [
   {
@@ -153,7 +153,7 @@ export const PROFESSIONAL_ADVICE: AdviceItem[] = [
       'אל תשלחו בקשות חיבור ריקות: תמיד הוסיפו הערה אישית קצרה שמסבירה למה אתם רוצים להתחבר.',
       'שתפו תובנות, לא רק הצלחות: פוסטים שמסבירים "איך פתרתי בעיה" מושכים הרבה יותר תשומת לב ממגייסים.',
       'חפשו "קשרים מדרגה שנייה": בקשו מהחברים שלכם להכיר לכם אנשים בחברות היעד שלכם. הפניה אישית שווה פי 10 משליחת קו"ח.',
-      'אופטימיזציה של הכותרת (Headline): אל תכתבו רק את התפקיד הנוכחי, כתבו מה הערך שאתם מביאים (למשל: "בונה פתרונות תוכנה שחוסכים זמן").'
+      'אופטימיזציה של הכותרת (Headline): אל תכתבו רק את התפקיד הנוכחי, כתבו מה הערך שאתם בביאים (למשל: "בונה פתרונות תוכנה שחוסכים זמן").'
     ]
   },
   {
@@ -218,5 +218,65 @@ export const INTERVIEW_QUESTIONS = [
   {
     question: "מהן ציפיות השכר שלך?",
     strategy: "עשו מחקר שוק מראש. תנו טווח במקום מספר מדויק, וציינו שאתם גמישים בהתאם לשאר התנאים והאחריות בתפקיד."
+  }
+];
+
+export const TECHNICAL_ROLES: TechnicalRole[] = [
+  {
+    id: "mechanical-design",
+    name: "תכן מכאני",
+    categories: [
+      {
+        title: "יסודות מכניקה וחוזק חומרים",
+        questions: [
+          { question: "איך מחשבים מאמץ וכפיפה בקורה קונזולית עם עומס בקצה?" },
+          { question: "מה ההבדל בין מאמץ נורמלי לגזירה?" },
+          { question: "כיצד מחשבים מקדם בטיחות ולפי מה בוחרים אותו?" },
+          { question: "מה ההבדל בין כשל סטטי לכשל עייפות?" },
+          { question: "איך מנתחים כשל עייפות במחזורי עומס משתנים?" }
+        ]
+      },
+      {
+        title: "תכן למערכות תעופתיות",
+        questions: [
+          { question: "אילו שיקולים מיוחדים קיימים בתכן חלק למטוס/כטב\"ם?" },
+          { question: "איך מתמודדים עם ויברציות ורעידות במבנה?" },
+          { question: "איך מבצעים אנליזת מודל (Modal Analysis)?" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "software-engineer",
+    name: "פיתוח תוכנה (Backend)",
+    categories: [
+      {
+        title: "מבני נתונים ואלגוריתמים",
+        questions: [
+          { question: "מה ההבדל בין Hash Map לבין Binary Search Tree?" },
+          { question: "איך עובד אלגוריתם QuickSort ומה הסיבוכיות שלו?" }
+        ]
+      },
+      {
+        title: "ארכיטקטורה ו-System Design",
+        questions: [
+          { question: "איך היית מתכנן מערכת שתומכת במיליוני משתמשים בו-זמנית?" },
+          { question: "מהו Microservices Architecture ומה היתרונות והחסרונות שלו?" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "electronics-engineer",
+    name: "הנדסת אלקטרוניקה",
+    categories: [
+      {
+        title: "מעגלים אנלוגיים ודיגיטליים",
+        questions: [
+          { question: "הסבר את עקרון הפעולה של מגבר שרת (Op-Amp)." },
+          { question: "מה ההבדל בין FPGA לבין Microcontroller?" }
+        ]
+      }
+    ]
   }
 ];
