@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ExternalLink, Star, Mic, Briefcase, GraduationCap, Share2, Check, Stethoscope, Heart } from 'lucide-react';
 import { ResourceItem } from '../types';
@@ -145,7 +144,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
               }`}
               title={isSaved ? "הסר מהשמורים" : "שמור משרה"}
             >
-              <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
+              <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''} relative z-10`} />
               {ripples.map((ripple) => (
                 <span
                   key={ripple.id}
@@ -165,7 +164,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
             className="p-2.5 text-slate-400 hover:text-medical-600 dark:hover:text-medical-400 hover:bg-medical-50 dark:hover:bg-medical-900/30 rounded-xl transition-all relative overflow-hidden"
             title="שתף קישור"
           >
-            {showCopied ? <Check className="w-5 h-5 text-medical-600" /> : <Share2 className="w-5 h-5" />}
+            {showCopied ? <Check className="w-5 h-5 text-medical-600 relative z-10" /> : <Share2 className="w-5 h-5 relative z-10" />}
             {ripples.map((ripple) => (
               <span
                 key={ripple.id}
@@ -211,7 +210,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
                 : 'bg-slate-50 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 border-slate-100 dark:border-slate-600'
             } group-hover:bg-medical-600 group-hover:text-white group-hover:border-medical-500 group-hover:shadow-lg group-hover:shadow-medical-600/20`}
           >
-            מרשם להצלחה: בקר באתר
+            <span className="relative z-10 flex items-center gap-2">מרשם להצלחה: בקר באתר</span>
             {ripples.map((ripple) => (
               <span
                 key={ripple.id}

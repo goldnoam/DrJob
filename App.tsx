@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart, PenTool, Share2, Copy, Check, ChevronDown, ChevronUp, Cpu, Database, Settings } from 'lucide-react';
-import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, INTERVIEW_QUESTIONS, TECHNICAL_ROLES } from './constants';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart, PenTool, Share2, Copy, Check, ChevronDown, ChevronUp, Cpu, Database, Settings, ArrowRight, User, ShieldCheck, Cloud, Layout, Terminal } from 'lucide-react';
+// Fixed: Removed missing export INTERVIEW_QUESTIONS from constants
+import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, TECHNICAL_ROLES } from './constants';
 import { ResourceCard } from './components/ResourceCard';
-import { TechnicalQuestion } from './types';
+import { TechnicalQuestion, TechnicalRole } from './types';
 
 const Tab = {
   JOBS: 'JOBS',
@@ -20,7 +22,7 @@ const QuestionItem: React.FC<{ q: TechnicalQuestion }> = ({ q }) => {
     <div className="bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:border-medical-200 dark:hover:border-medical-800/50 transition-all">
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full text-right p-4 flex items-start justify-between gap-3 group"
+        className="w-full text-right p-4 flex items-start justify-between gap-3 group focus:outline-none"
       >
         <div className="flex items-start gap-3">
           <span className="font-bold text-medical-500 mt-0.5">•</span>
@@ -43,9 +45,38 @@ const QuestionItem: React.FC<{ q: TechnicalQuestion }> = ({ q }) => {
   );
 };
 
+const RoleCard: React.FC<{ role: TechnicalRole, onClick: () => void }> = ({ role, onClick }) => {
+  const getIcon = () => {
+    if (role.id.includes('cyber')) return <ShieldCheck size={32} />;
+    if (role.id.includes('cloud')) return <Cloud size={32} />;
+    if (role.id.includes('data')) return <Database size={32} />;
+    if (role.id.includes('ui') || role.id.includes('designer')) return <Layout size={32} />;
+    if (role.id.includes('developer') || role.id.includes('cpp') || role.id.includes('python')) return <Terminal size={32} />;
+    return <User size={32} />;
+  }
+
+  return (
+    <button 
+      onClick={onClick}
+      className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-medical-500 dark:hover:border-medical-500 hover:shadow-xl hover:-translate-y-1 transition-all group h-full w-full text-center relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-medical-500/20"
+    >
+      <div className="p-4 bg-medical-50 dark:bg-medical-900/30 text-medical-600 dark:text-medical-400 rounded-full mb-4 group-hover:bg-medical-500 group-hover:text-white transition-all duration-300 transform group-hover:rotate-6">
+        {getIcon()}
+      </div>
+      <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-medical-600 dark:group-hover:text-medical-400 transition-colors">
+        {role.name}
+      </h3>
+      <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-2 font-medium uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+        צפה בשאלות <ArrowRight className="w-3 h-3 rotate-180" />
+      </div>
+    </button>
+  );
+};
+
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>(Tab.JOBS);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Default to dark mode as requested
   const [darkMode, setDarkMode] = useState(true);
   const [jobSearch, setJobSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -54,7 +85,8 @@ const App: React.FC = () => {
   const [savedJobUrls, setSavedJobUrls] = useState<string[]>([]);
   const [isContentVisible, setIsContentVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedTechRoleId, setSelectedTechRoleId] = useState<string>(TECHNICAL_ROLES[0].id);
+  const [selectedTechRoleId, setSelectedTechRoleId] = useState<string | null>(null);
+  const [isRoleLoading, setIsRoleLoading] = useState(false);
   const [showShareSuccess, setShowShareSuccess] = useState(false);
 
   useEffect(() => {
@@ -123,9 +155,23 @@ const App: React.FC = () => {
     }, 300);
   };
 
-  const currentTechRole = TECHNICAL_ROLES.find(r => r.id === selectedTechRoleId) || TECHNICAL_ROLES[0];
+  const currentTechRole = useMemo(() => 
+    TECHNICAL_ROLES.find(r => r.id === selectedTechRoleId),
+    [selectedTechRoleId]
+  );
+
+  const handleRoleSelect = (roleId: string) => {
+    setIsRoleLoading(true);
+    // Simulate lazy loading delay for technical questions
+    setTimeout(() => {
+      setSelectedTechRoleId(roleId);
+      setIsRoleLoading(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 300);
+  };
 
   const handleShareQuestions = () => {
+    if (!currentTechRole) return;
     let text = `🩺 שאלות מקצועיות לראיון עבודה עבור: ${currentTechRole.name}\n\n`;
     currentTechRole.categories.forEach(cat => {
       text += `--- ${cat.title} ---\n`;
@@ -223,7 +269,7 @@ const App: React.FC = () => {
           <div className="space-y-12 animate-fadeIn">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">פיתוח מיומנויות ולמידה</h2>
-              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">שדרגו את קורות החיים שלכם עם קורסים והסמכות מהמוסדות המובילים בעולם. הידע הוא המרשם הכי טוב לקריירה.</p>
+              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">שדרגו את קורות החיים שלכם עם קורסים והסמכות מהמוסדות המובילים בעולם.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {LEARNING_SITES.map((site) => (
@@ -235,82 +281,97 @@ const App: React.FC = () => {
       case Tab.INTERVIEW:
         return (
           <div className="space-y-12 animate-fadeIn">
-             <div className="text-center">
-                <div className="inline-flex p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 mb-4">
-                  <Mic className="w-8 h-8" />
-                </div>
-                <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">סימולציות והכנה לראיונות</h2>
-                <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">כלים מתקדמים לתרגול ראיונות עבודה. זכרו: תרגול נכון מונע 'דפיקות לב' בראיון האמיתי.</p>
-             </div>
-             
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {INTERVIEW_SITES.map((site) => (
-                <ResourceCard key={site.url} resource={site} type="interview" />
-              ))}
-            </div>
+             {!selectedTechRoleId ? (
+               <>
+                 <div className="text-center mb-12">
+                    <div className="inline-flex p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 mb-4">
+                      <Mic className="w-8 h-8" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">בנק שאלות מקצועיות</h2>
+                    <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">בחרו את התפקיד שלכם כדי לקבל את ה"אבחנה" המקצועית - שאלות נפוצות בראיונות טכניים והתשובות המומלצות.</p>
+                 </div>
+                 
+                 {isRoleLoading ? (
+                   <div className="flex flex-col items-center justify-center py-20">
+                     <Loader2 className="w-10 h-10 animate-spin text-medical-500" />
+                     <p className="mt-4 text-slate-500">טוען שאלות מקצועיות...</p>
+                   </div>
+                 ) : (
+                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                      {TECHNICAL_ROLES.map(role => (
+                        <RoleCard 
+                          key={role.id} 
+                          role={role} 
+                          onClick={() => handleRoleSelect(role.id)} 
+                        />
+                      ))}
+                   </div>
+                 )}
 
-            <div className="mt-16 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
-              <div className={`absolute top-4 right-1/2 translate-x-1/2 z-30 transition-all duration-300 ${showShareSuccess ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-                <div className="bg-medical-600 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5" /> השאלות הועתקו ללוח
-                </div>
-              </div>
-
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
-                    <PenTool className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white">בנק שאלות מקצועיות</h3>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">בחרו תפקיד ולחצו על שאלה לצפייה בתשובה המומלצת</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleShareQuestions}
-                  className="flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-700/50 hover:bg-medical-50 dark:hover:bg-medical-900/30 text-slate-600 dark:text-slate-300 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 transition-all font-medium"
-                >
-                  <Share2 className="w-4 h-4" /> שתף שאלות
-                </button>
-              </div>
-              
-              {/* Role Selector with scroll for mobile */}
-              <div className="relative mb-10 group">
-                <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2 -mx-2 px-2 scroll-smooth">
-                  {TECHNICAL_ROLES.map(role => (
-                    <button
-                      key={role.id}
-                      onClick={() => setSelectedTechRoleId(role.id)}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border whitespace-nowrap flex-shrink-0 ${
-                        selectedTechRoleId === role.id 
-                          ? 'bg-medical-500 border-medical-500 text-white shadow-md' 
-                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-medical-400'
-                      }`}
-                    >
-                      {role.name}
-                    </button>
-                  ))}
-                </div>
-                {/* Visual fade indicators for scroll */}
-                <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-white dark:from-slate-800 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-white dark:from-slate-800 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
-                {currentTechRole.categories.map((cat, idx) => (
-                  <div key={idx} className="space-y-5">
-                    <h4 className="text-lg font-bold text-medical-600 dark:text-medical-400 border-r-4 border-medical-500 pr-3">
-                      {cat.title}
-                    </h4>
-                    <div className="space-y-4">
-                      {cat.questions.map((q, qIdx) => (
-                        <QuestionItem key={qIdx} q={q} />
+                 <div className="mt-20 border-t border-slate-200 dark:border-slate-700 pt-10">
+                    <div className="flex items-center gap-3 mb-8">
+                      <HelpCircle className="w-6 h-6 text-medical-500" />
+                      <h3 className="text-2xl font-bold text-slate-800 dark:text-white">סימולציות וכלים כלליים</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {INTERVIEW_SITES.map((site) => (
+                        <ResourceCard key={site.url} resource={site} type="interview" />
                       ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+                 </div>
+               </>
+             ) : (
+               <div className="animate-fadeIn">
+                 <button 
+                   onClick={() => setSelectedTechRoleId(null)}
+                   className="mb-8 flex items-center gap-2 text-medical-600 dark:text-medical-400 font-bold hover:underline group"
+                 >
+                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                   חזרה לרשימת התפקידים
+                 </button>
+
+                 <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                    <div className={`absolute top-4 right-1/2 translate-x-1/2 z-30 transition-all duration-300 ${showShareSuccess ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+                      <div className="bg-medical-600 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5" /> השאלות הועתקו ללוח
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-medical-50 dark:bg-medical-900/30 rounded-2xl text-medical-600 dark:text-medical-400">
+                          <User size={32} />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{currentTechRole?.name}</h3>
+                          <p className="text-slate-500 dark:text-slate-400 text-sm">לחצו על השאלה לצפייה בתשובה המומלצת</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleShareQuestions}
+                        className="flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-700/50 hover:bg-medical-50 dark:hover:bg-medical-900/30 text-slate-600 dark:text-slate-300 px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-600 transition-all font-bold"
+                      >
+                        <Share2 className="w-4 h-4" /> שתף שאלות
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+                      {currentTechRole?.categories.map((cat, idx) => (
+                        <div key={idx} className="space-y-5">
+                          <h4 className="text-lg font-bold text-medical-600 dark:text-medical-400 border-r-4 border-medical-500 pr-3">
+                            {cat.title}
+                          </h4>
+                          <div className="space-y-4">
+                            {cat.questions.map((q, qIdx) => (
+                              <QuestionItem key={qIdx} q={q} />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                 </div>
+               </div>
+             )}
           </div>
         );
       case Tab.ADVICE:
@@ -330,6 +391,8 @@ const App: React.FC = () => {
                       <div className={`p-4 rounded-2xl bg-${item.color}-50 dark:bg-${item.color}-900/20 text-${item.color}-600 dark:text-${item.color}-400`}>
                         {item.icon === 'Network' && <Network className="w-6 h-6" />}
                         {item.icon === 'UserCheck' && <UserCheck className="w-6 h-6" />}
+                        {item.icon === 'Zap' && <Zap className="w-6 h-6" />}
+                        {item.icon === 'Star' && <Star className="w-6 h-6" />}
                       </div>
                       <h3 className="text-xl font-bold text-slate-800 dark:text-white">{item.title}</h3>
                     </div>
@@ -425,7 +488,7 @@ const App: React.FC = () => {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <a href="mailto:goldnoamai@gmail.com" className="flex items-center gap-2 hover:text-medical-600 transition-colors px-4 py-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <Mail className="w-4 h-4" /> שלח משוב
+              <Mail className="w-4 h-4" /> Send Feedback
             </a>
             <span className="hidden md:inline opacity-30">|</span>
             <span className="text-xs">goldnoamai@gmail.com</span>
