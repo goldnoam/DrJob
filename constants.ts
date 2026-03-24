@@ -82,6 +82,12 @@ export const LEARNING_SITES: ResourceItem[] = [
     name: "freeCodeCamp",
     description: "למידת תכנות ופיתוח תוכנה בחינם לחלוטין עם תעודות.",
     url: "https://www.freecodecamp.org/",
+  },
+  {
+    name: "הר הידע - דיגיטלית (Digitalit)",
+    description: "פלטפורמה ללמידה דיגיטלית ושיפור מיומנויות טכנולוגיות מבית משרד העבודה.",
+    url: "https://harhayeda.gov.il/digitalit/",
+    recommended: true,
   }
 ];
 
@@ -268,17 +274,21 @@ export const TECHNICAL_ROLES: TechnicalRole[] = [
           { question: "מהם Smart Pointers?", answer: "אובייקטים המנהלים זיכרון ומונעים Memory Leaks (unique_ptr, shared_ptr, weak_ptr)." },
           { question: "מהו RAII?", answer: "Resource Acquisition Is Initialization - משאב נקשר למחזור החיים של אובייקט ומשתחרר אוטומטית ב-Destructor." },
           { question: "מה תפקיד המילה virtual?", answer: "מאפשרת פולימורפיזם בזמן ריצה (Dynamic Dispatch) - קריאה לפונקציית הבן דרך מצביע של מחלקת האב." },
-          { question: "מהו ההבדל בין קומפילציה ללינקינג?", answer: "קומפילציה הופכת קוד מקור לקבצי Object. לינקינג מחבר אותם לספרייה או לקובץ הרצה (Executable)." }
+          { question: "מהו ההבדל בין קומפילציה ללינקינג?", answer: "קומפילציה הופכת קוד מקור לקבצי Object. לינקינג מחבר אותם לספרייה או לקובץ הרצה (Executable)." },
+          { question: "מהו Shallow Copy לעומת Deep Copy?", answer: "Shallow מעתיק רק את המצביעים (שניהם מצביעים לאותו זיכרון). Deep מעתיק את התוכן של הזיכרון לכתובת חדשה." },
+          { question: "מהו Memory Leak ואיך מונעים אותו?", answer: "הקצאת זיכרון ב-Heap ללא שחרורו. מונעים ע\"י שימוש ב-Smart Pointers או הקפדה על delete לכל new." }
         ]
       },
       {
-        title: "Advanced C++",
+        title: "Advanced C++ & OOP",
         questions: [
           { question: "מהו ה-VTable?", answer: "טבלה פנימית למימוש פולימורפיזם. מכילה כתובות של פונקציות וירטואליות עבור כל מחלקה." },
           { question: "מהם Templates ב-C++?", answer: "כלי לכתיבת קוד גנרי (פונקציות או מחלקות) שיכול לעבוד עם טיפוסי נתונים שונים ללא שכפול קוד." },
           { question: "מה ההבדל בין Public, Private ו-Protected?", answer: "Public נגיש לכולם. Private נגיש רק למחלקה עצמה. Protected נגיש גם למחלקות יורשות." },
           { question: "מהו ה-Rule of Five?", answer: "הנחיה למימוש Copy/Move Constructors, Assignment Operators ו-Destructor כשמנהלים משאבי זיכרון." },
-          { question: "מהו ה-Namespace ולמה הוא משמש?", answer: "מניעת התנגשויות שמות בין ספריות ורכיבים שונים בקוד רחב היקף." }
+          { question: "מהו ה-Namespace ולמה הוא משמש?", answer: "מניעת התנגשויות שמות בין ספריות ורכיבים שונים בקוד רחב היקף." },
+          { question: "מהו Pure Virtual Function?", answer: "פונקציה שמוגדרת כ-0= וגורמת למחלקה להיות Abstract (לא ניתן ליצור ממנה אובייקטים)." },
+          { question: "מהו ההבדל בין Overloading ל-Overriding?", answer: "Overloading הוא אותה פונקציה עם חתימות שונות באותה מחלקה. Overriding הוא מימוש מחדש של פונקציית אב במחלקת בן." }
         ]
       }
     ]
@@ -294,17 +304,21 @@ export const TECHNICAL_ROLES: TechnicalRole[] = [
           { question: "מה ההבדל בין List ל-Tuple?", answer: "List ניתן לשינוי (Mutable) ואיטי יותר. Tuple לא ניתן לשינוי (Immutable), מהיר יותר ותופס פחות זיכרון." },
           { question: "מהם Generators ב-Python?", answer: "פונקציות המחזירות Iterator באמצעות המילה yield. חוסכות זיכרון כי הן מייצרות איברים לפי דרישה." },
           { question: "איך עובדים Decorators?", answer: "פונקציות שעוטפות פונקציות אחרות להוספת לוגיקה (למשל Logging או Timing) מבלי לשנות את הקוד המקורי." },
-          { question: "מה ההבדל בין append ל-extend?", answer: "append מוסיף אובייקט בודד לסוף הרשימה. extend מוסיף את כל האיברים של iterable לרשימה הקיימת." }
+          { question: "מה ההבדל בין append ל-extend?", answer: "append מוסיף אובייקט בודד לסוף הרשימה. extend מוסיף את כל האיברים של iterable לרשימה הקיימת." },
+          { question: "מהו ה-MRO (Method Resolution Order)?", answer: "הסדר שבו פייתון מחפש מתודות בהיררכיית ירושה מרובה, נקבע לפי אלגוריתם C3 linearization." },
+          { question: "מה ההבדל בין is ל-==?", answer: "== בודק שוויון ערכים (Equality). is בודק אם שני המשתנים מצביעים לאותו אובייקט בזיכרון (Identity)." }
         ]
       },
       {
-        title: "Advanced Python",
+        title: "Advanced Python Topics",
         questions: [
           { question: "מהו ה-Context Manager (המילה with)?", answer: "מבטיח ניהול משאבים נכון, למשל סגירה אוטומטית של קבצים או שחרור Locks בסיום השימוש." },
           { question: "מה ההבדל בין __init__ ל-__new__?", answer: "__new__ הוא המפעל שיוצר את האובייקט, __init__ הוא המעצב שמאתחל את הערכים שלו." },
           { question: "איך Python מנהל זיכרון?", answer: "באמצעות Reference Counting בשילוב עם Garbage Collector שמזהה מעגלי הפניות (Cyclic References)." },
           { question: "מה ההבדל בין שגיאות Syntax לשגיאות Runtime?", answer: "Syntax מתגלות לפני ההרצה (קוד לא חוקי). Runtime מתרחשות בזמן ריצה (למשל חילוק ב-0)." },
-          { question: "מהו List Comprehension?", answer: "דרך קצרה ואלגנטית ליצירת רשימות חדשות על בסיס לולאה ותנאי בשורה אחת בלבד." }
+          { question: "מהו List Comprehension?", answer: "דרך קצרה ואלגנטית ליצירת רשימות חדשות על בסיס לולאה ותנאי בשורה אחת בלבד." },
+          { question: "מהו ה-Metaclass?", answer: "מחלקה של מחלקות. מאפשרת לשנות את אופן היצירה של מחלקות עצמן (למשל לאכיפת סטנדרטים)." },
+          { question: "מה ההבדל בין Multiprocessing ל-Multithreading?", answer: "Threading משתף זיכרון ומוגבל ע\"י ה-GIL. Multiprocessing יוצר תהליכים נפרדים עם זיכרון נפרד ועוקף את ה-GIL." }
         ]
       }
     ]
@@ -347,6 +361,32 @@ export const TECHNICAL_ROLES: TechnicalRole[] = [
           { question: "מהו Bug Lifecycle?", answer: "New -> Open -> Fixed -> Retest -> Closed (או Reopen אם הבעיה לא נפתרה)." },
           { question: "מה ההבדל בין Black Box ל-White Box Testing?", answer: "Black Box בודק פלט לפי קלט בלי לראות קוד. White Box בודק את הלוגיקה הפנימית של הקוד." },
           { question: "איך כותבים Bug Report איכותי?", answer: "כותרת ברורה, צעדים לשחזור, תוצאה צפויה מול תוצאה בפועל וצילום מסך." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "it-specialist",
+    name: "IT Specialist",
+    categories: [
+      {
+        title: "Networking",
+        questions: [
+          { question: "מהו מודל ה-OSI ומהן 7 השכבות שלו?", answer: "מודל תיאורטי לתקשורת: Physical, Data Link, Network, Transport, Session, Presentation, Application." },
+          { question: "מה ההבדל בין TCP ל-UDP?", answer: "TCP הוא Connection-oriented ומבטיח הגעת נתונים. UDP הוא Connectionless, מהיר יותר אך לא מבטיח הגעה." },
+          { question: "איך עובד פרוטוקול DHCP?", answer: "מקצה כתובות IP באופן אוטומטי למכשירים ברשת באמצעות תהליך DORA (Discover, Offer, Request, Acknowledge)." },
+          { question: "מהו DNS ואיך הוא מתרגם שמות?", answer: "Domain Name System - מתרגם שמות דומיין (כמו google.com) לכתובות IP שהמחשב מבין." },
+          { question: "מה ההבדל בין Router ל-Switch?", answer: "Switch מחבר מכשירים בתוך אותה רשת (LAN). Router מחבר בין רשתות שונות (למשל הבית לאינטרנט)." }
+        ]
+      },
+      {
+        title: "Systems & Security",
+        questions: [
+          { question: "מהו Active Directory (AD)?", answer: "שירות של מיקרוסופט לניהול משתמשים, קבוצות והרשאות ברשת ארגונית בצורה מרכזית." },
+          { question: "מה ההבדל בין HTTP ל-HTTPS?", answer: "HTTPS מוסיף שכבת הצפנה (SSL/TLS) על גבי HTTP להגנה על פרטיות הנתונים." },
+          { question: "מהו Firewall ואיך הוא מגן על הרשת?", answer: "מערכת אבטחה המסננת תעבורה נכנסת ויוצאת על פי חוקים מוגדרים מראש." },
+          { question: "מהו VPN ומה השימוש העיקרי שלו?", answer: "Virtual Private Network - יוצר צינור מוצפן ומאובטח על גבי רשת ציבורית לגישה מרחוק למשאבי הארגון." },
+          { question: "איך מתמודדים עם מתקפת Phishing?", answer: "הדרכת משתמשים, שימוש ב-MFA (אימות דו-שלבי), וסינון דוא\"ל זדוני במערכות הארגון." }
         ]
       }
     ]

@@ -1,16 +1,18 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart, PenTool, Share2, Copy, Check, ChevronDown, ChevronUp, Cpu, Database, Settings, ArrowRight, User, ShieldCheck, Cloud, Layout, Terminal } from 'lucide-react';
+import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart, PenTool, Share2, Copy, Check, ChevronDown, ChevronUp, Cpu, Database, Settings, ArrowRight, User, ShieldCheck, Cloud, Layout, Terminal, Sparkles } from 'lucide-react';
 // Fixed: Removed missing export INTERVIEW_QUESTIONS from constants
 import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, TECHNICAL_ROLES } from './constants';
 import { ResourceCard } from './components/ResourceCard';
+import { AITools } from './components/AITools';
 import { TechnicalQuestion, TechnicalRole } from './types';
 
 const Tab = {
   JOBS: 'JOBS',
   LEARNING: 'LEARNING',
   INTERVIEW: 'INTERVIEW',
-  ADVICE: 'ADVICE'
+  ADVICE: 'ADVICE',
+  AI_TOOLS: 'AI_TOOLS'
 } as const;
 
 type TabType = typeof Tab[keyof typeof Tab];
@@ -52,6 +54,7 @@ const RoleCard: React.FC<{ role: TechnicalRole, onClick: () => void }> = ({ role
     if (role.id.includes('data')) return <Database size={32} />;
     if (role.id.includes('ui') || role.id.includes('designer')) return <Layout size={32} />;
     if (role.id.includes('developer') || role.id.includes('cpp') || role.id.includes('python')) return <Terminal size={32} />;
+    if (role.id.includes('it') || role.id.includes('specialist')) return <Settings size={32} />;
     return <User size={32} />;
   }
 
@@ -409,6 +412,8 @@ const App: React.FC = () => {
              </div>
           </div>
         );
+      case Tab.AI_TOOLS:
+        return <AITools />;
       default: return null;
     }
   };
@@ -443,6 +448,7 @@ const App: React.FC = () => {
             <nav className="hidden lg:flex gap-1 bg-slate-100 dark:bg-slate-700/50 p-1 rounded-xl">
               <NavButton tab={Tab.JOBS} icon={Briefcase} label="חיפוש עבודה" />
               <NavButton tab={Tab.LEARNING} icon={GraduationCap} label="למידה וקורסים" />
+              <NavButton tab={Tab.AI_TOOLS} icon={Sparkles} label="כלי AI" />
               <NavButton tab={Tab.INTERVIEW} icon={Mic} label="הכנה לראיונות" />
               <NavButton tab={Tab.ADVICE} icon={Lightbulb} label="טיפים מקצועיים" />
             </nav>
@@ -456,7 +462,13 @@ const App: React.FC = () => {
         </div>
         <div className={`lg:hidden bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 absolute w-full left-0 shadow-lg z-40 transition-all duration-300 origin-top ${isMobileMenuOpen ? 'opacity-100 translate-y-0 visible scale-y-100' : 'opacity-0 -translate-y-4 invisible scale-y-95 pointer-events-none'}`}>
           <div className="flex flex-col p-4 gap-2 text-right">
-            {[ { t: Tab.JOBS, l: 'חיפוש עבודה', i: Briefcase }, { t: Tab.LEARNING, l: 'למידה וקורסים', i: GraduationCap }, { t: Tab.INTERVIEW, l: 'הכנה לראיונות', i: Mic }, { t: Tab.ADVICE, l: 'טיפים מקצועיים', i: Lightbulb } ].map(item => (
+            {[ 
+              { t: Tab.JOBS, l: 'חיפוש עבודה', i: Briefcase }, 
+              { t: Tab.LEARNING, l: 'למידה וקורסים', i: GraduationCap }, 
+              { t: Tab.AI_TOOLS, l: 'כלי AI', i: Sparkles },
+              { t: Tab.INTERVIEW, l: 'הכנה לראיונות', i: Mic }, 
+              { t: Tab.ADVICE, l: 'טיפים מקצועיים', i: Lightbulb } 
+            ].map(item => (
               <button key={item.t} onClick={() => handleTabChange(item.t as TabType)} className={`p-3 rounded-xl font-medium flex items-center justify-end gap-3 ${activeTab === item.t ? 'bg-medical-50 dark:bg-medical-900/30 text-medical-700 dark:text-medical-300' : 'text-slate-600 dark:text-slate-300'}`}>
                 {item.l} <item.i className="w-5 h-5" /> 
               </button>
