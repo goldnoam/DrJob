@@ -111,23 +111,23 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
       <div className="h-2 bg-gradient-to-l from-medical-500/20 to-medical-600/40 dark:from-medical-900/40 dark:to-medical-800/60" />
 
       {/* Card Content Header */}
-      <div className="p-6 pb-0 flex justify-between items-start">
-        <div className="flex gap-4 items-center">
-          <div className={`p-3 rounded-xl shadow-sm ring-1 ring-slate-100 dark:ring-slate-700 transition-all duration-300 group-hover:scale-110 ${getTypeColorClasses()} group-hover:bg-medical-500 group-hover:text-white group-hover:ring-medical-400 group-hover:shadow-medical-500/20`}>
+      <div className="p-4 md:p-6 pb-0 flex justify-between items-start">
+        <div className="flex gap-3 md:gap-4 items-center">
+          <div className={`p-2.5 md:p-3 rounded-xl shadow-sm ring-1 ring-slate-100 dark:ring-slate-700 transition-all duration-300 group-hover:scale-110 ${getTypeColorClasses()} group-hover:bg-medical-500 group-hover:text-white group-hover:ring-medical-400 group-hover:shadow-medical-500/20`}>
             {getIcon()}
           </div>
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${getTypeColorClasses()}`}>
+              <span className={`text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${getTypeColorClasses()}`}>
                 {getTypeLabel()}
               </span>
               {resource.category && (
-                <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                <span className="text-[9px] md:text-[10px] font-medium text-slate-400 dark:text-slate-500">
                   • {resource.category}
                 </span>
               )}
             </div>
-            <h3 className="text-xl font-bold text-slate-800 dark:text-white leading-tight group-hover:text-medical-600 dark:group-hover:text-medical-400 transition-colors">
+            <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white leading-tight group-hover:text-medical-600 dark:group-hover:text-medical-400 transition-colors">
               {resource.name}
             </h3>
           </div>
@@ -182,18 +182,18 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
       </div>
       
       {/* Body */}
-      <div className="p-6 flex flex-col flex-grow">
-        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-3">
+      <div className="p-4 md:p-6 flex flex-col flex-grow">
+        <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm leading-relaxed mb-4 md:mb-6 line-clamp-3">
           {resource.description}
         </p>
         
         <div className="mt-auto space-y-3">
-          <div className="flex items-center justify-between text-[11px] font-medium text-slate-400 dark:text-slate-500 px-1">
+          <div className="flex items-center justify-between text-[10px] md:text-[11px] font-medium text-slate-400 dark:text-slate-500 px-1">
              <div className="flex items-center gap-1">
                <Stethoscope className="w-3 h-3 text-medical-500/50" />
                <span>אבחנה: {isSaved ? 'שמור במערכת' : 'מוכן לשימוש'}</span>
              </div>
-             <span className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+             <span className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity items-center gap-1">
                בקר באתר <ExternalLink className="w-3 h-3" />
              </span>
           </div>
@@ -204,7 +204,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
               createRipple(e);
               setTimeout(handleLinkClick, 150);
             }}
-            className={`w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 border relative overflow-hidden ${
+            className={`w-full py-2.5 md:py-3 px-4 rounded-xl font-bold text-xs md:text-sm flex items-center justify-center gap-2 transition-all duration-300 border relative overflow-hidden ${
               isSaved && type === 'job'
                 ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border-red-100 dark:border-red-800'
                 : 'bg-slate-50 dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 border-slate-100 dark:border-slate-600'
