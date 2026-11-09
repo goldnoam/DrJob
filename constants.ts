@@ -55,15 +55,60 @@ export const JOB_SITES: ResourceItem[] = [
     category: "Government",
   },
   {
+    name: "מערך הדיגיטל הלאומי - משרות וקריירה",
+    description: "פורטל המשרות של מערך הדיגיטל הלאומי. משרות טכנולוגיה, סייבר, פיתוח, דאטה ודיגיטל בשירות המדינה ובישראל.",
+    url: "https://govextra.gov.il/national-digital-agency/jobs/home/",
+    category: "General",
+    recommended: true,
+  },
+  {
     name: "אבו-דאטה (Avodata) - משרד העבודה",
     description: "מערכת נתוני תעסוקה, שכר ומחקר של משרד העבודה המציגה נתונים סטטיסטיים ומגמות בשוק העבודה הישראלי.",
     url: "https://avodata.labor.gov.il/",
     category: "Government",
     recommended: true,
+  },
+  {
+    name: "פורטל גיוס מרכב״ה - שירות המדינה ומשרדי הממשלה",
+    description: "המערכת והפורטל המרכזי של מדינת ישראל לגיוס עובדים, הגשת מועמדות ומכרזי כוח אדם בכל משרדי הממשלה, יחידות הסמך והשירות הציבורי.",
+    url: "https://merkava.mrp.gov.il/giusp/index.html",
+    category: "General",
+    recommended: true,
+  }
+];
+
+export const ROLE_EXPLORATION_SITES: ResourceItem[] = [
+  {
+    name: "MyRole - עולם התפקידים והמקצועות",
+    description: "מאגר מקיף של תפקידים ומקצועות במשק הישראלי מחולק לפי קטגוריות. למידה מעמיקה על מה עושים ביום-יום בכל תפקיד, אילו כישורים ומיומנויות נדרשים ואיך להשתלב בתחום.",
+    url: "https://myrole.co.il/#categories",
+    category: "חקר מקצועות ותפקידים",
+    recommended: true,
+  },
+  {
+    name: "אבו-דאטה (Avodata) - משרד העבודה",
+    description: "מערכת המידע הלאומית של משרד העבודה לחקר מקצועות ותפקידים בישראל: נתוני שכר ממוצע לפי ותק, שיעורי תעסוקה, מוסדות לימוד ומגמות ביקוש עבור מאות מקצועות.",
+    url: "https://avodata.labor.gov.il/",
+    category: "חקר מקצועות ותפקידים",
+    recommended: true,
   }
 ];
 
 export const LEARNING_SITES: ResourceItem[] = [
+  {
+    name: "MyRole - עולם התפקידים והמקצועות",
+    description: "מאגר מקיף של תפקידים ומקצועות במשק הישראלי מחולק לפי קטגוריות. גלו מה עושים ביום-יום, אילו כישורים נדרשים ואיך להשתלב בתפקיד.",
+    url: "https://myrole.co.il/#categories",
+    category: "חקר מקצועות",
+    recommended: true,
+  },
+  {
+    name: "אבו-דאטה (Avodata) - משרד העבודה",
+    description: "מערכת המידע הלאומית של משרד העבודה לחקר מקצועות: נתוני שכר ממוצע לפי ותק, שיעורי תעסוקה, מוסדות לימוד ומגמות ביקוש עבור מאות מקצועות בישראל.",
+    url: "https://avodata.labor.gov.il/",
+    category: "חקר מקצועות",
+    recommended: true,
+  },
   {
     name: "קמפוס IL (Campus IL)",
     description: "המיזם הלאומי ללמידה דיגיטלית. קורסים אקדמיים והכשרות מקצועיות בחינם בשיתוף האוניברסיטאות ומשרדי הממשלה.",

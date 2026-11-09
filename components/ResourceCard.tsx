@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExternalLink, Star, Mic, Briefcase, GraduationCap, Share2, Check, Stethoscope, Heart } from 'lucide-react';
+import { ExternalLink, Star, Mic, Briefcase, GraduationCap, Share2, Check, Stethoscope, Heart, Compass } from 'lucide-react';
 import { ResourceItem } from '../types';
 
 interface Ripple {
@@ -11,7 +11,7 @@ interface Ripple {
 
 interface ResourceCardProps {
   resource: ResourceItem;
-  type: 'job' | 'learning' | 'interview';
+  type: 'job' | 'learning' | 'interview' | 'role';
   isSaved?: boolean;
   onToggleSave?: () => void;
 }
@@ -64,6 +64,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
       case 'job': return <Briefcase className="w-6 h-6" />;
       case 'learning': return <GraduationCap className="w-6 h-6" />;
       case 'interview': return <Mic className="w-6 h-6" />;
+      case 'role': return <Compass className="w-6 h-6" />;
       default: return <Stethoscope className="w-6 h-6" />;
     }
   };
@@ -73,6 +74,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
       case 'job': return 'דרושים';
       case 'learning': return 'למידה';
       case 'interview': return 'ראיונות';
+      case 'role': return 'חקר תפקידים';
       default: return '';
     }
   };
@@ -82,6 +84,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, type, isSa
       case 'job': return 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
       case 'learning': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
       case 'interview': return 'bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300';
+      case 'role': return 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
       default: return 'bg-medical-50 text-medical-700 dark:bg-medical-900/30 dark:text-medical-300';
     }
   };

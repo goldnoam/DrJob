@@ -2,9 +2,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Briefcase, GraduationCap, Stethoscope, Search, Menu, X, Sun, Moon, Mic, Loader2, Mail, Star, Lightbulb, Network, UserCheck, Compass, Zap, ChevronRight, HelpCircle, Heart, PenTool, Share2, Copy, Check, ChevronDown, ChevronUp, Cpu, Database, Settings, ArrowRight, User, ShieldCheck, Cloud, Layout, Terminal, Sparkles, PlusCircle, Building2, MapPin, Layers, FileText, CheckCircle2, Filter, Send, ExternalLink, Code } from 'lucide-react';
 // Fixed: Removed missing export INTERVIEW_QUESTIONS from constants
-import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, TECHNICAL_ROLES } from './constants';
+import { JOB_SITES, LEARNING_SITES, INTERVIEW_SITES, PROFESSIONAL_ADVICE, TECHNICAL_ROLES, ROLE_EXPLORATION_SITES } from './constants';
 import { ResourceCard } from './components/ResourceCard';
 import { AITools } from './components/AITools';
+import { JobSearchBar } from './components/JobSearchBar';
+import { MajorJobSites } from './components/MajorJobSites';
+import { LegalModals, LegalModalType } from './components/LegalModals';
 import { TechnicalQuestion, TechnicalRole, DirectJob, JobApplication } from './types';
 
 const Tab = {
@@ -92,64 +95,21 @@ const App: React.FC = () => {
   const [isRoleLoading, setIsRoleLoading] = useState(false);
   const [showShareSuccess, setShowShareSuccess] = useState(false);
 
-  // Direct jobs & applications states
+  // Direct jobs & applications states (demo jobs removed; stores employer-posted jobs)
   const [activeJobSubTab, setActiveJobSubTab] = useState<'direct' | 'external'>('direct');
+  const [activeLegalModal, setActiveLegalModal] = useState<LegalModalType>(null);
   
   const [directJobs, setDirectJobs] = useState<DirectJob[]>(() => {
     const saved = localStorage.getItem('drjob_direct_jobs');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { }
+      try { 
+        const parsed = JSON.parse(saved);
+        // Filter out legacy demo job ids ('1', '2', '3', '4') so old demo jobs don't persist in localStorage
+        const nonDemo = Array.isArray(parsed) ? parsed.filter((j: DirectJob) => !['1', '2', '3', '4'].includes(j.id)) : [];
+        return nonDemo;
+      } catch (e) { }
     }
-    return [
-      {
-        id: '1',
-        title: 'מפתח/ת Full Stack React & Node.js',
-        company: 'טק-סולושנס בע"מ',
-        location: 'תל אביב',
-        industry: 'פיתוח תוכנה',
-        experienceLevel: 'בנינוניים/Mid',
-        description: 'דרוש/ה מפתח/ת Full Stack מוכשר/ת להשתלבות בצוות פיתוח מוצר חדשני בענן. עבודה עם React, TypeScript, Node.js ו-MongoDB.',
-        salary: '₪22,000 - ₪28,000',
-        contactEmail: 'hr@techsolutions.co.il',
-        createdAt: Date.now() - 86400000 * 2
-      },
-      {
-        id: '2',
-        title: 'מנהל/ת שיווק דיגיטלי ושחקן/ית תוכן',
-        company: 'גרוות תעשיות',
-        location: 'מרחוק',
-        industry: 'שיווק',
-        experienceLevel: 'בכיר',
-        description: 'ניהול קמפיינים ממומנים (PPC), כתיבת תוכן שיווקי, ניהול רשתות חברתיות ואנליטיקה עסקית לחברה בינלאומית.',
-        salary: '₪18,000 - ₪23,000',
-        contactEmail: 'jobs@growgroup.co.il',
-        createdAt: Date.now() - 86400000 * 5
-      },
-      {
-        id: '3',
-        title: 'נציג/ת שירות לקוחות ותמיכה טכנית',
-        company: 'סלולר-טק',
-        location: 'חיפה',
-        industry: 'שירות לקוחות',
-        experienceLevel: 'ללא ניסיון',
-        description: 'מתן מענה טכני ושירותי ללקוחות החברה במוקד מוביל בחיפה. הכשרה מלאה עלינו! מתאים גם לסטודנטים.',
-        salary: '₪9,000 - ₪12,000',
-        contactEmail: 'support@cellulartech.co.il',
-        createdAt: Date.now() - 86400000 * 1
-      },
-      {
-        id: '4',
-        title: 'אנליסט/ית נתונים (Data Analyst)',
-        company: 'פינטק ישראל',
-        location: 'ירושלים',
-        industry: 'פיננסים',
-        experienceLevel: 'ג\'וניור',
-        description: 'ניתוח נתונים פיננסיים, בניית דשבורדים ב-Tableau / PowerBI ועבודה עם SQL לעזרה בקבלת החלטות ענקיות.',
-        salary: '₪16,000 - ₪20,000',
-        contactEmail: 'analytics@fintechisrael.com',
-        createdAt: Date.now() - 86400000 * 3
-      }
-    ];
+    return [];
   });
 
   const [jobApplications, setJobApplications] = useState<JobApplication[]>(() => {
@@ -449,74 +409,61 @@ const App: React.FC = () => {
               )}
             </div>
 
-            {/* Direct Jobs View */}
+            {/* Search Bar Component */}
+            <JobSearchBar
+              keyword={directSearchKeyword}
+              onKeywordChange={setDirectSearchKeyword}
+              location={filterLocation}
+              onLocationChange={setFilterLocation}
+              industry={filterIndustry}
+              onIndustryChange={setFilterIndustry}
+              totalResultsCount={activeJobSubTab === 'direct' ? filteredDirectJobs.length : undefined}
+              onReset={() => {
+                setDirectSearchKeyword('');
+                setFilterLocation('הכל');
+                setFilterIndustry('הכל');
+                setFilterExperience('הכל');
+              }}
+              onSearch={() => {
+                showToast('מסנני החיפוש הוחלו בהצלחה');
+              }}
+            />
+
+            {/* Featured Section: Major Israeli Job Search Websites */}
+            <MajorJobSites
+              sites={JOB_SITES}
+              savedUrls={savedJobUrls}
+              onToggleSave={toggleSaveJob}
+            />
+
+            {/* Direct Jobs vs Categorized Boards View */}
             {activeJobSubTab === 'direct' ? (
-              <div className="space-y-8">
-                {/* Search & Filtering System */}
-                <div className="bg-white dark:bg-slate-800/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
-                  <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold mb-2">
-                    <Filter className="w-5 h-5 text-medical-500" />
-                    סינון וחיפוש משרות מתקדם
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                      <Briefcase className="w-6 h-6 text-medical-500" />
+                      משרות ישירות באתר ({filteredDirectJobs.length})
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-0.5">
+                      משרות שפורסמו ישירות על ידי מעסיקים ב-Dr. Job עם אפשרות להגשת מועמדות מיידית.
+                    </p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {/* Keyword Search */}
-                    <div className="relative md:col-span-1">
-                      <Search className="absolute right-3 top-3.5 w-5 h-5 text-slate-400" />
-                      <input
-                        type="text"
-                        placeholder="חיפוש לפי כותרת, חברה..."
-                        value={directSearchKeyword}
-                        onChange={(e) => setDirectSearchKeyword(e.target.value)}
-                        className="w-full pr-10 p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-medical-500 focus:outline-none"
-                      />
-                    </div>
-                    {/* Location Filter */}
-                    <div>
-                      <select
-                        value={filterLocation}
-                        onChange={(e) => setFilterLocation(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-medical-500 focus:outline-none"
-                      >
-                        <option value="הכל">כל המיקומים</option>
-                        <option value="תל אביב">תל אביב</option>
-                        <option value="חיפה">חיפה</option>
-                        <option value="ירושלים">ירושלים</option>
-                        <option value="מרכז">מרכז</option>
-                        <option value="צפון">צפון</option>
-                        <option value="דרום">דרום</option>
-                        <option value="מרחוק">מרחוק (Remote)</option>
-                      </select>
-                    </div>
-                    {/* Industry Filter */}
-                    <div>
-                      <select
-                        value={filterIndustry}
-                        onChange={(e) => setFilterIndustry(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-medical-500 focus:outline-none"
-                      >
-                        <option value="הכל">כל התעשיות</option>
-                        <option value="פיתוח תוכנה">פיתוח תוכנה</option>
-                        <option value="שיווק">שיווק</option>
-                        <option value="שירות לקוחות">שירות לקוחות</option>
-                        <option value="פיננסים">פיננסים</option>
-                        <option value="עיצוב">עיצוב</option>
-                      </select>
-                    </div>
-                    {/* Experience Filter */}
-                    <div>
-                      <select
-                        value={filterExperience}
-                        onChange={(e) => setFilterExperience(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-medical-500 focus:outline-none"
-                      >
-                        <option value="הכל">כל רמות הניסיון</option>
-                        <option value="ללא ניסיון">ללא ניסיון</option>
-                        <option value="ג'וניור">ג'וניור</option>
-                        <option value="בנינוניים/Mid">בנינוניים/Mid</option>
-                        <option value="בכיר">בכיר</option>
-                        <option value="ראשי צוותים">ראשי צוותים</option>
-                      </select>
-                    </div>
+                  {/* Experience quick filter */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">רמת ניסיון:</span>
+                    <select
+                      value={filterExperience}
+                      onChange={(e) => setFilterExperience(e.target.value)}
+                      className="p-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-medium focus:ring-2 focus:ring-medical-500 focus:outline-none"
+                    >
+                      <option value="הכל">כל רמות הניסיון</option>
+                      <option value="ללא ניסיון">ללא ניסיון</option>
+                      <option value="ג'וניור">ג'וניור</option>
+                      <option value="בנינוניים/Mid">בנינוניים / Mid</option>
+                      <option value="בכיר">בכיר</option>
+                      <option value="ראשי צוותים">ראשי צוותים</option>
+                    </select>
                   </div>
                 </div>
 
@@ -565,14 +512,45 @@ const App: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-full text-center py-20 bg-white dark:bg-slate-800/50 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
-                      <p className="text-lg text-slate-500">לא נמצאו משרות התואמות את סינון החיפוש.</p>
-                      <button
-                        onClick={() => { setDirectSearchKeyword(''); setFilterLocation('הכל'); setFilterIndustry('הכל'); setFilterExperience('הכל'); }}
-                        className="mt-4 text-medical-600 font-bold hover:underline"
-                      >
-                        אפס מסננים
-                      </button>
+                    <div className="col-span-full text-center py-16 px-6 bg-white dark:bg-slate-800/50 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+                      <div className="inline-flex p-3 rounded-2xl bg-medical-50 dark:bg-medical-900/30 text-medical-600 dark:text-medical-400 mb-3">
+                        <Briefcase className="w-8 h-8" />
+                      </div>
+                      <h4 className="text-xl font-bold text-slate-800 dark:text-white mb-2">
+                        {directJobs.length === 0 ? 'אין כרגע משרות ישירות פתוחות באתר' : 'לא נמצאו משרות התואמות לחיפוש הנוכחי'}
+                      </h4>
+                      <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto text-sm mb-5">
+                        {directJobs.length === 0
+                          ? 'מעסיקים מוזמנים לפרסם משרות חדשות בחינם, או עברו לעיין בכל אתרי הדרושים המובילים בישראל (AllJobs, Jobmaster, LinkedIn ועוד).'
+                          : 'נסו לשנות את מילת המפתח, המיקום או התחום כדי לצפות במשרות נוספות.'}
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center gap-3">
+                        {directJobs.length === 0 ? (
+                          <>
+                            <button
+                              onClick={() => setShowPostJobModal(true)}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-sm text-sm"
+                            >
+                              <PlusCircle className="w-4 h-4" />
+                              פרסם משרה ראשונה
+                            </button>
+                            <button
+                              onClick={() => setActiveJobSubTab('external')}
+                              className="bg-medical-600 hover:bg-medical-700 text-white font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-sm text-sm"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                              צפה באתרי הדרושים הגדולים בישראל
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => { setDirectSearchKeyword(''); setFilterLocation('הכל'); setFilterIndustry('הכל'); setFilterExperience('הכל'); }}
+                            className="bg-medical-50 hover:bg-medical-100 dark:bg-medical-900/30 text-medical-600 dark:text-medical-400 font-bold px-5 py-2.5 rounded-xl transition-all"
+                          >
+                            אפס מסננים
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -619,7 +597,7 @@ const App: React.FC = () => {
                     משרות ממשלתיות ונתוני תעסוקה (Government Jobs)
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {JOB_SITES.filter(s => s.category === 'Government').map(site => (
+                    {JOB_SITES.filter(s => s.category === 'Government' || s.url.includes('merkava') || s.url.includes('govextra')).map(site => (
                       <ResourceCard key={site.url} resource={site} type="job" isSaved={savedJobUrls.includes(site.url)} onToggleSave={() => toggleSaveJob(site.url)} />
                     ))}
                   </div>
@@ -645,19 +623,70 @@ const App: React.FC = () => {
         return (
           <div className="space-y-12 animate-fadeIn">
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">פיתוח מיומנויות ולמידה</h2>
-              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">שדרגו את קורות החיים שלכם עם קורסים והסמכות מהמוסדות המובילים בעולם.</p>
+              <div className="inline-flex p-3 bg-medical-100 dark:bg-medical-900/30 rounded-full text-medical-600 dark:text-medical-400 mb-4">
+                <GraduationCap className="w-8 h-8" />
+              </div>
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">פיתוח מיומנויות, למידה וחקר תפקידים</h2>
+              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                שדרגו את קורות החיים שלכם, גלו הכל על תפקידים מבוקשים והירשמו לקורסים והסמכות מהמוסדות המובילים בארץ ובעולם.
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {LEARNING_SITES.map((platform) => (
-                <ResourceCard 
-                  key={platform.url} 
-                  resource={platform} 
-                  type="learning" 
-                  isSaved={savedLearningUrls.includes(platform.url)}
-                  onToggleSave={() => toggleSaveLearning(platform.url)}
-                />
-              ))}
+
+            {/* Special Section: Role Exploration & Career Discovery */}
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 p-6 md:p-8 rounded-3xl border border-amber-200 dark:border-amber-800/40 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold mb-2">
+                      <Compass className="w-3.5 h-3.5" />
+                      חקר מקצועות ותפקידים
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
+                      גלו ולמדו על תפקידים ומקצועות בשוק הישראלי
+                    </h3>
+                    <p className="text-slate-600 dark:text-slate-300 text-sm md:text-base max-w-3xl mt-1">
+                      מתלבטים לגבי המסלול הבא בקריירה שלכם? היעזרו במאגרים המובילים לחקר תפקידים: הבינו מה עושים ביום-יום, אילו כישורים ומיומנויות נדרשים, וצפו בנתוני שכר וביקוש ממשלתיים.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {ROLE_EXPLORATION_SITES.map((platform) => (
+                    <ResourceCard 
+                      key={platform.url} 
+                      resource={platform} 
+                      type="role" 
+                      isSaved={savedLearningUrls.includes(platform.url)}
+                      onToggleSave={() => toggleSaveLearning(platform.url)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Courses & Skill Platforms */}
+            <div className="space-y-6">
+              <div className="border-b border-slate-200 dark:border-slate-700 pb-3">
+                <h3 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                  <GraduationCap className="w-6 h-6 text-medical-500" />
+                  קורסים והסמכות מקצועיות
+                </h3>
+                <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">
+                  פלטפורמות למידה מקוונות להרחבת הידע ולרכישת תעודות מקצועיות.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {LEARNING_SITES.filter(s => s.category !== 'חקר מקצועות ותפקידים' && s.category !== 'חקר מקצועות').map((platform) => (
+                  <ResourceCard 
+                    key={platform.url} 
+                    resource={platform} 
+                    type="learning" 
+                    isSaved={savedLearningUrls.includes(platform.url)}
+                    onToggleSave={() => toggleSaveLearning(platform.url)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -674,7 +703,7 @@ const App: React.FC = () => {
 
              {selectedTechRoleId === null ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {TECHNICAL_ROLES.map((role) => (
                       <div 
                         key={role.id}
@@ -684,7 +713,15 @@ const App: React.FC = () => {
                         <div>
                           <div className="flex items-center justify-between mb-6">
                             <div className="p-4 rounded-2xl bg-medical-50 dark:bg-medical-900/30 text-medical-600 dark:text-medical-400 group-hover:bg-medical-600 group-hover:text-white transition-colors">
-                              {role.id === 'cpp' ? <Terminal size={28} /> : role.id === 'python' ? <Cpu size={28} /> : role.id === 'it' ? <Network size={28} /> : <Code size={28} />}
+                              {role.id.includes('cyber') ? <ShieldCheck size={28} /> : 
+                               role.id.includes('cloud') || role.id.includes('devops') ? <Cloud size={28} /> : 
+                               role.id.includes('data') || role.id.includes('db') ? <Database size={28} /> : 
+                               role.id.includes('ui') ? <Layout size={28} /> : 
+                               role.id.includes('cpp') ? <Terminal size={28} /> : 
+                               role.id.includes('python') ? <Cpu size={28} /> : 
+                               role.id.includes('it') ? <Network size={28} /> : 
+                               role.id.includes('qa') ? <CheckCircle2 size={28} /> : 
+                               <Code size={28} />}
                             </div>
                             <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full font-medium">
                               {role.categories.reduce((acc, c) => acc + c.questions.length, 0)} שאלות
@@ -694,7 +731,7 @@ const App: React.FC = () => {
                             {role.name}
                           </h3>
                           <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
-                            {role.description}
+                            {role.description || 'שאלות ותשובות מקצועיות מקיפות לראיונות עבודה בתחום.'}
                           </p>
                         </div>
                         <div className="flex items-center gap-2 text-medical-600 dark:text-medical-400 font-bold text-sm">
@@ -703,6 +740,53 @@ const App: React.FC = () => {
                         </div>
                       </div>
                     ))}
+                  </div>
+
+                  {/* Section: Learn More About Roles: Avodata & MyRole */}
+                  <div className="mt-14 bg-gradient-to-r from-amber-50/90 via-orange-50/50 to-amber-50/90 dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-800 p-6 md:p-8 rounded-3xl border border-amber-200 dark:border-slate-700 shadow-sm">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                          <Compass className="w-7 h-7" />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-slate-800 dark:text-white">
+                            רוצים ללמוד עוד על תפקידים ומקצועות נוספים?
+                          </h3>
+                          <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">
+                            אתרים מומלצים להעמקה על תחומי אחריות, מה עושים ביום-יום, דרישות סף ונתוני שכר רשמיים בישראל:
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {ROLE_EXPLORATION_SITES.map((site) => (
+                        <ResourceCard 
+                          key={site.url} 
+                          resource={site} 
+                          type="role" 
+                          isSaved={savedLearningUrls.includes(site.url)}
+                          onToggleSave={() => toggleSaveLearning(site.url)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* General Simulation & Tools */}
+                  <div className="mt-10 border-t border-slate-200 dark:border-slate-700 pt-8">
+                    <div className="flex items-center gap-3 mb-6">
+                      <HelpCircle className="w-6 h-6 text-medical-500" />
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-800 dark:text-white">סימולציות וכלים כלליים לראיונות</h3>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">הדמיות אינטראקטיביות וכלים מבוססי AI לתרגול מעשי</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {INTERVIEW_SITES.map((site) => (
+                        <ResourceCard key={site.url} resource={site} type="interview" />
+                      ))}
+                    </div>
                   </div>
                 </>
               ) : (
@@ -757,154 +841,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
               )}
-          </div>
-        );
-      case Tab.ADVICE:
-        return (
-          <div className="space-y-10 animate-fadeIn">
-             <div className="text-center mb-12">
-                <div className="inline-flex p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full text-yellow-600 dark:text-yellow-400 mb-4">
-                  <Lightbulb className="w-8 h-8" />
-                </div>
-                <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">טיפים מקצועיים לקריירה</h2>
-                <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">תובנות מעשיות שיעזרו לכם להתבלט מעל כולם בתהליך חיפוש העבודה.</p>
-             </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {PROFESSIONAL_ADVICE.map((item) => (
-                  <div key={item.id} className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className={`p-4 rounded-2xl bg-${item.color}-50 dark:bg-${item.color}-900/20 text-${item.color}-600 dark:text-${item.color}-400`}>
-                        {item.icon === 'Network' && <Network className="w-6 h-6" />}
-                        {item.icon === 'UserCheck' && <UserCheck className="w-6 h-6" />}
-                        {item.icon === 'Zap' && <Zap className="w-6 h-6" />}
-                        {item.icon === 'Star' && <Star className="w-6 h-6" />}
-                        {item.icon === 'Compass' && <Compass className="w-6 h-6" />}
-                        {item.icon === 'Search' && <Search className="w-6 h-6" />}
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-800 dark:text-white">{item.title}</h3>
-                    </div>
-                    <ul className="space-y-4">
-                      {item.content.map((point, idx) => (
-                        <li key={idx} className="flex gap-3 text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed">
-                          <ChevronRight className={`w-5 h-5 flex-shrink-0 text-${item.color}-500`} />
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-             </div>
-          </div>
-        );
-
-            case Tab.LEARNING:
-        return (
-          <div className="space-y-12 animate-fadeIn">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">פיתוח מיומנויות ולמידה</h2>
-              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">שדרגו את קורות החיים שלכם עם קורסים והסמכות מהמוסדות המובילים בעולם.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {LEARNING_SITES.map((site) => (
-                <ResourceCard key={site.url} resource={site} type="learning" />
-              ))}
-            </div>
-          </div>
-        );
-      case Tab.INTERVIEW:
-        return (
-          <div className="space-y-12 animate-fadeIn">
-             {!selectedTechRoleId ? (
-               <>
-                 <div className="text-center mb-12">
-                    <div className="inline-flex p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 mb-4">
-                      <Mic className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">בנק שאלות מקצועיות</h2>
-                    <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">בחרו את התפקיד שלכם כדי לקבל את ה"אבחנה" המקצועית - שאלות נפוצות בראיונות טכניים והתשובות המומלצות.</p>
-                 </div>
-                 
-                 {isRoleLoading ? (
-                   <div className="flex flex-col items-center justify-center py-20">
-                     <Loader2 className="w-10 h-10 animate-spin text-medical-500" />
-                     <p className="mt-4 text-slate-500">טוען שאלות מקצועיות...</p>
-                   </div>
-                 ) : (
-                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                      {TECHNICAL_ROLES.map(role => (
-                        <RoleCard 
-                          key={role.id} 
-                          role={role} 
-                          onClick={() => handleRoleSelect(role.id)} 
-                        />
-                      ))}
-                   </div>
-                 )}
-
-                 <div className="mt-20 border-t border-slate-200 dark:border-slate-700 pt-10">
-                    <div className="flex items-center gap-3 mb-8">
-                      <HelpCircle className="w-6 h-6 text-medical-500" />
-                      <h3 className="text-2xl font-bold text-slate-800 dark:text-white">סימולציות וכלים כלליים</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {INTERVIEW_SITES.map((site) => (
-                        <ResourceCard key={site.url} resource={site} type="interview" />
-                      ))}
-                    </div>
-                 </div>
-               </>
-             ) : (
-               <div className="animate-fadeIn">
-                 <button 
-                   onClick={() => setSelectedTechRoleId(null)}
-                   className="mb-8 flex items-center gap-2 text-medical-600 dark:text-medical-400 font-bold hover:underline group"
-                 >
-                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                   חזרה לרשימת התפקידים
-                 </button>
-
-                 <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 border border-slate-100 dark:border-slate-700 shadow-sm relative overflow-hidden">
-                    <div className={`absolute top-4 right-1/2 translate-x-1/2 z-30 transition-all duration-300 ${showShareSuccess ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-                      <div className="bg-medical-600 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5" /> השאלות הועתקו ללוח
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-medical-50 dark:bg-medical-900/30 rounded-2xl text-medical-600 dark:text-medical-400">
-                          <User size={32} />
-                        </div>
-                        <div>
-                          <h3 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{currentTechRole?.name}</h3>
-                          <p className="text-slate-500 dark:text-slate-400 text-sm">לחצו על השאלה לצפייה בתשובה המומלצת</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleShareQuestions}
-                        className="flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-700/50 hover:bg-medical-50 dark:hover:bg-medical-900/30 text-slate-600 dark:text-slate-300 px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-600 transition-all font-bold"
-                      >
-                        <Share2 className="w-4 h-4" /> שתף שאלות
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
-                      {currentTechRole?.categories.map((cat, idx) => (
-                        <div key={idx} className="space-y-5">
-                          <h4 className="text-lg font-bold text-medical-600 dark:text-medical-400 border-r-4 border-medical-500 pr-3">
-                            {cat.title}
-                          </h4>
-                          <div className="space-y-4">
-                            {cat.questions.map((q, qIdx) => (
-                              <QuestionItem key={qIdx} q={q} />
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                 </div>
-               </div>
-             )}
           </div>
         );
       case Tab.ADVICE:
@@ -1324,6 +1260,9 @@ const App: React.FC = () => {
         </div>
       </div>
 
+      {/* Legal & Compliance Modals */}
+      <LegalModals activeModal={activeLegalModal} onClose={() => setActiveLegalModal(null)} />
+
       <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-12 pb-24 lg:pb-12 mt-auto">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-slate-500 dark:text-slate-400 text-sm">
@@ -1334,6 +1273,33 @@ const App: React.FC = () => {
               </div>
               <p className="font-medium">© Noam Gold AI 2026</p>
               <p className="text-xs opacity-60">המרכז הישראלי למציאת עבודה וקריירה</p>
+
+              {/* Compliance & Legal Links */}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1 text-xs pt-2 border-t border-slate-100 dark:border-slate-700/60 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveLegalModal('terms')}
+                  className="hover:text-medical-600 dark:hover:text-medical-400 underline-offset-4 hover:underline transition-colors"
+                >
+                  תנאי שימוש
+                </button>
+                <span className="opacity-30">•</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveLegalModal('privacy')}
+                  className="hover:text-medical-600 dark:hover:text-medical-400 underline-offset-4 hover:underline transition-colors"
+                >
+                  מדיניות פרטיות
+                </button>
+                <span className="opacity-30">•</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveLegalModal('accessibility')}
+                  className="hover:text-medical-600 dark:hover:text-medical-400 underline-offset-4 hover:underline transition-colors"
+                >
+                  הצהרת נגישות
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-col items-center md:items-end gap-4">
